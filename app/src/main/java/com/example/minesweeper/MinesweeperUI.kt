@@ -59,6 +59,26 @@ fun MineSweeperScreen(viewModel: GameViewModel) {
             )
         }
     }
+
+    if (viewModel.isgameOver.value) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = {
+            },
+            title = {
+                Text(text = "BOOM! 💥")
+            },
+            text = {
+                Text("Nagazili ste na minu. Želite li novu igru?")
+            },
+            confirmButton = {
+                androidx.compose.material3.Button(
+                    onClick = { viewModel.resetGame() }
+                ) {
+                    Text("Probaj ponovo")
+                }
+            }
+        )
+    }
 }
 
 @Composable

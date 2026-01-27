@@ -11,6 +11,7 @@ enum class GameMode {
 class GameViewModel : ViewModel() {
     val gridSize = 16
     val mineCount = 45
+    var isgameOver = mutableStateOf(false)
     var board = mutableStateListOf<Cell>()
     var isFirstClick = true
 
@@ -28,12 +29,34 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    fun resetGame() {
+        isgameOver.value = false
+        isFirstClick = true
+        generateEmptyboard()
+    }
+
     fun onCellClick(clickedCell : Cell){
+        if(isgameOver.value) return
+
         if(isFirstClick){
             setupMines(clickedCell)
             isFirstClick = false
         }
-        revealCell(clickedCell)
+        if(clickedCell.isMine) {
+            onGameOver()
+        } else {
+            revealCell(clickedCell)
+        }
+    }
+
+    private fun onGameOver() {
+        isgameOver.value = true
+
+        for(i in board.indices) {
+            if(board[i].isMine) {
+                board[i] = board[i].copy(status = CellStatus.REVEALED)
+            }
+        }
     }
 
     private fun setupMines(startcell: Cell){
@@ -84,6 +107,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun onToggleFlag(cell: Cell) {
+        if(isgameOver.value) return
         val index = board.indexOf(cell)
         if (index != -1 && board[index].status != CellStatus.REVEALED) {
             val currentStatus = board[index].status
