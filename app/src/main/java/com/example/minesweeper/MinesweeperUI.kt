@@ -5,11 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,20 +48,23 @@ fun MineSweeperScreen(viewModel: GameViewModel) {
                 colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = CardColor),
                 modifier = Modifier
                     .padding(16.dp)
-                    .weight(1f)
-                    .aspectRatio(1f),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                    .weight(1f),
+                shape = RoundedCornerShape(16.dp)
             ) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(viewModel.gridSize),
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    items(viewModel.board) { cell ->
-                        CellView(
-                            cell = cell,
-                            onClick = { viewModel.handleCellInteraction(cell) },
-                            onLongClick = { viewModel.onToggleFlag(cell) }
-                        )
+                Box(modifier = Modifier.fillMaxSize().horizontalScroll(rememberScrollState())) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(viewModel.gridSize),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .width(700.dp)
+                    ) {
+                        items(viewModel.board) { cell ->
+                            CellView(
+                                cell = cell,
+                                onClick = { viewModel.handleCellInteraction(cell) },
+                                onLongClick = { viewModel.onToggleFlag(cell) }
+                            )
+                        }
                     }
                 }
             }
@@ -176,7 +182,7 @@ fun CellView(
 
     Box(
         modifier = Modifier
-            .padding(2.dp)
+            .padding(1.dp)
             .aspectRatio(1f)
             .clip(androidx.compose.foundation.shape.RoundedCornerShape(4.dp))
             .background(backgroundColor)
@@ -189,17 +195,17 @@ fun CellView(
     ) {
         if (cell.status == CellStatus.REVEALED) {
             if (cell.isMine) {
-                Text(text = "💣", fontSize = 14.sp)
+                Text(text = "💣", fontSize = 20.sp)
             } else if (cell.nearbyMines > 0) {
                 Text(
                     text = "${cell.nearbyMines}",
-                    fontSize = 14.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = getNumberColor(cell.nearbyMines)
                 )
             }
         } else if (cell.status == CellStatus.FLAGGED) {
-            Text(text = "🚩", fontSize = 14.sp)
+            Text(text = "🚩", fontSize = 20.sp)
         }
     }
 }
